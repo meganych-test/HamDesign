@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Players</title>
+</head>
+<body>
+    <h1>Registered Players</h1>
+    <ul id="players-list"></ul>
+    <p id="error-message" style="color: red;"></p>
+    
+    <script>
+        fetch('/api/index')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(players => {
+                const playersList = document.getElementById('players-list');
+                if (players.length === 0) {
+                    playersList.textContent = 'No players found.';
+                } else {
+                    players.forEach(player => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${player.username} - ${player.telegramid}`;
+                        playersList.appendChild(listItem);
+                    });
+                }
+            })
+            .catch(error => {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = 'Error fetching players: ' + error.message;
+                console.error('Error fetching players:', error);
+            });
+    </script>
+</body>
+</html>
